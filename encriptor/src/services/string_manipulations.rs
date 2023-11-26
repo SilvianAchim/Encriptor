@@ -20,5 +20,5 @@ pub fn divide_words(words: Vec<&str>, num_groups: usize) -> Vec<Vec<&str>> {
         divided_words.push(current_group);
     }
 
-    return divided_words
+    return divided_words;
 }

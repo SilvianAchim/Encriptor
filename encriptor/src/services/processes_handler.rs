@@ -1,6 +1,8 @@
-use std::{thread, time};
 use std::io::Read;
 use std::process::{Child, ChildStdout, Command, Stdio};
+use std::{thread, time};
+
+use crate::services::file_actions::write_to_file;
 
 pub fn run_processes(
     process_path: &str,
@@ -21,15 +23,16 @@ pub fn run_processes(
     }
 
     let mut children_processes = start_processes(commands);
+    let children_outputs = process_children(&mut children_processes);
 
-    let outputs = process_children(&mut children_processes);
-
+    let mut output = String::new();
     if flag == "encode" {
-        println!("{}", seed);
+        output.push_str(format!("{}\n", seed).as_str());
     }
-    for (_, output) in outputs {
-        print!("{}", output);
+    for (_, children_output) in children_outputs {
+        output.push_str(&children_output);
     }
+    write_to_file("src/output.txt", &output);
 }
 
 fn process_children(
@@ -76,4 +79,3 @@ fn start_processes(commands: Vec<(&str, String)>) -> Vec<(usize, Child, ChildStd
 
     return children;
 }
-

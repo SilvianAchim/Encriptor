@@ -18,7 +18,7 @@ pub fn encode(filepath: &str, processes_count: u8) {
         processes_count,
         divided_words,
         "encode",
-        seed.to_string().as_str()
+        seed.to_string().as_str(),
     );
 }
 
@@ -32,6 +32,6 @@ pub fn decode(filepath: &str, seed: &str, processes_count: u8) {
         processes_count,
         divided_words,
         "decode",
-        seed.to_string().as_str()
+        seed.to_string().as_str(),
     );
 }
