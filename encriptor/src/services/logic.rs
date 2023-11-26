@@ -1,5 +1,7 @@
 use std::fs;
 
+use rand::Rng;
+
 use crate::services::processes_handler::run_processes;
 use crate::services::string_manipulations::divide_words;
 
@@ -8,10 +10,15 @@ pub fn encode(filepath: &str, processes_count: u8) {
     let words = file_content.split_whitespace().collect();
     let divided_words = divide_words(words, processes_count as usize);
 
+    let mut rng = rand::thread_rng();
+    let seed: u64 = rng.gen();
+
     run_processes(
         "../encriptor_process/target/debug/encriptor_process.exe",
         processes_count,
         divided_words,
+        "encode",
+        seed.to_string().as_str()
     );
 }
 

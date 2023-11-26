@@ -1,63 +1,57 @@
 use std::env;
 
-use rand::{Rng, rngs::StdRng, SeedableRng, seq::SliceRandom};
+use rand::{rngs::StdRng, SeedableRng, seq::SliceRandom};
 
-fn shuffle_string(input: &str, seed: u64) -> String {
+fn encode_string(input: &str, seed: u64) -> String {
     let mut rng = StdRng::seed_from_u64(seed);
-
-    return input
-        .split_whitespace()
-        .map(|word| {
-            let mut chars: Vec<char> = word.chars().collect();
-            chars.shuffle(&mut rng);
-            chars.into_iter().collect::<String>()
-        })
-        .collect::<Vec<String>>()
-        .join(" ")
+    let mut chars: Vec<char> = input.chars().collect();
+    chars.shuffle(&mut rng);
+    chars.into_iter().collect()
 }
 
-fn decode_string(shuffled: &str, seed: u64) -> String {
+fn decode_string(input: &str, seed: u64) -> String {
     let mut rng = StdRng::seed_from_u64(seed);
+    let mut chars: Vec<char> = input.chars().collect();
+    let mut indices: Vec<usize> = (0..chars.len()).collect();
 
-    return shuffled.split_whitespace()
-        .map(|word| {
-            let mut chars: Vec<char> = word.chars().collect();
-            let mut indices: Vec<usize> = (0..chars.len()).collect();
+    indices.shuffle(&mut rng);
 
-            indices.shuffle(&mut rng);
+    let mut decoded_chars = vec![' '; chars.len()];
+    for (new_pos, &original_pos) in indices.iter().enumerate() {
+        decoded_chars[original_pos] = chars[new_pos];
+    }
 
-            let mut decoded_chars = vec![' '; chars.len()];
-            for (new_pos, &original_pos) in indices.iter().enumerate() {
-                decoded_chars[original_pos] = chars[new_pos];
-            }
-
-            decoded_chars.into_iter().collect::<String>()
-        })
-        .collect::<Vec<String>>()
-        .join(" ")
+    return decoded_chars.into_iter().collect()
 }
+
 
 fn main() {
     //NOTE: Should be called with:
-         // {string} -> encode that string and outputs the encoded_string + the seed
-         // {string} {seed} -> decode that string and outputs the decoded string
+    // {String} {String} {Flag} -> {String to be decoded}, {Seed}, {Flags: {--decode || --encode}, {--d || --e}}
 
     let args: Vec<String> = env::args().collect();
 
-    match args.len() {
-        0 | 1 => panic!("Not enough arguments!"),
-        2 => {
-            let mut rng = rand::thread_rng();
-            let seed: u64 = rng.gen();
-            println!("{} {}", shuffle_string(args[1].as_str(), seed), seed);
-        }
-        3 => {
-            let seed = args[2]
-                .parse::<u64>()
-                .expect("Failed to convert string to u64");
+    if args.len() < 4 {
+        panic!("Invalid number of arguments!");
+    }
 
-            println!("{}", decode_string(args[1].as_str(), seed))
+    let decode = args.iter().any(|arg| arg == "decode");
+    let encode = args.iter().any(|arg| arg == "encode");
+
+    if !decode && !encode {
+        panic!("Invalid flags!");
+    }
+
+    let seed = args[2]
+        .parse::<u64>()
+        .expect("Failed to convert string to u64");
+
+    for (i, _) in args.iter().enumerate().skip(3){
+        if decode {
+            print!("{} ", decode_string(args[i].as_str(), seed));
         }
-        _ => panic!("Too Many arguments!"),
+        else{
+            print!("{} ", encode_string(args[i].as_str(), seed));
+        }
     }
 }

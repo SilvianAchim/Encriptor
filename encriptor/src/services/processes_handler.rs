@@ -1,23 +1,32 @@
+use std::{thread, time};
 use std::io::Read;
 use std::process::{Child, ChildStdout, Command, Stdio};
-use std::{thread, time};
 
-pub fn run_processes(process_path: &str, processes_count: u8, args: Vec<Vec<&str>>) {
+pub fn run_processes(
+    process_path: &str,
+    processes_count: u8,
+    args: Vec<Vec<&str>>,
+    flag: &str,
+    seed: &str,
+) {
     if args.len() != processes_count as usize {
         panic!("Invalid number of arguments for the given number of processes!");
     }
 
     let mut commands = Vec::new();
     for arg in args {
-        commands.push((process_path, arg));
+        let args_joined = arg.join(" ");
+        let formatted_arg = format!("{} {} {}", flag, seed, args_joined);
+        commands.push((process_path, formatted_arg));
     }
 
     let mut children_processes = start_processes(commands);
 
     let outputs = process_children(&mut children_processes);
 
+    println!("{}", seed);
     for (_, output) in outputs {
-        println!("Output: {}", output);
+        print!("{}", output);
     }
 }
 
@@ -46,17 +55,15 @@ fn process_children(
     }
 
     outputs.sort_by_key(|(index, _)| *index);
-    outputs
+    return outputs;
 }
 
-fn start_processes(commands: Vec<(&str, Vec<&str>)>) -> Vec<(usize, Child, ChildStdout)> {
+fn start_processes(commands: Vec<(&str, String)>) -> Vec<(usize, Child, ChildStdout)> {
     let mut children = Vec::new();
 
     for (i, (program, args)) in commands.into_iter().enumerate() {
-        let args_joined = args.join(" ");
-
         let mut child = Command::new(program)
-            .arg(args_joined)
+            .args(args.split_whitespace())
             .stdout(Stdio::piped())
             .spawn()
             .expect("Failed to start process");
@@ -67,3 +74,4 @@ fn start_processes(commands: Vec<(&str, Vec<&str>)>) -> Vec<(usize, Child, Child
 
     return children;
 }
+
