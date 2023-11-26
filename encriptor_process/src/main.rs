@@ -1,43 +1,59 @@
-use rand::{rngs::StdRng, Rng, SeedableRng, seq::SliceRandom};
+use std::env;
+
+use rand::{Rng, rngs::StdRng, SeedableRng, seq::SliceRandom};
 
 fn shuffle_string(input: &str, seed: u64) -> String {
     let mut rng = StdRng::seed_from_u64(seed);
 
-    let mut chars: Vec<char> = input.chars().collect();
-    chars.shuffle(&mut rng);
-    return chars.into_iter().collect()
+    return input
+        .split_whitespace()
+        .map(|word| {
+            let mut chars: Vec<char> = word.chars().collect();
+            chars.shuffle(&mut rng);
+            chars.into_iter().collect::<String>()
+        })
+        .collect::<Vec<String>>()
+        .join(" ")
 }
 
 fn decode_string(shuffled: &str, seed: u64) -> String {
     let mut rng = StdRng::seed_from_u64(seed);
 
-    let mut chars: Vec<char> = shuffled.chars().collect();
-    let mut indices: Vec<usize> = (0..chars.len()).collect();
+    return shuffled.split_whitespace()
+        .map(|word| {
+            let mut chars: Vec<char> = word.chars().collect();
+            let mut indices: Vec<usize> = (0..chars.len()).collect();
 
-    indices.shuffle(&mut rng);
+            indices.shuffle(&mut rng);
 
-    let mut decoded_chars = vec![' '; chars.len()];
-    for (new_pos, &original_pos) in indices.iter().enumerate() {
-        decoded_chars[original_pos] = chars[new_pos];
-    }
+            let mut decoded_chars = vec![' '; chars.len()];
+            for (new_pos, &original_pos) in indices.iter().enumerate() {
+                decoded_chars[original_pos] = chars[new_pos];
+            }
 
-    return decoded_chars.into_iter().collect()
+            decoded_chars.into_iter().collect::<String>()
+        })
+        .collect::<Vec<String>>()
+        .join(" ")
 }
 
-
 fn main() {
-    let original_string = "Hello, World!";
+    let args: Vec<String> = env::args().collect();
 
-    let mut rng = rand::thread_rng();
-    let seed: u64 = rng.gen();
+    match args.len() {
+        0 | 1 => panic!("Not enough arguments!"),
+        2 => {
+            let mut rng = rand::thread_rng();
+            let seed: u64 = rng.gen();
+            println!("{} {}", shuffle_string(args[1].as_str(), seed), seed);
+        }
+        3 => {
+            let seed = args[2]
+                .parse::<u64>()
+                .expect("Failed to convert string to u64");
 
-    let shuffled_string = shuffle_string(original_string, seed);
-
-    println!("Original: {}", original_string);
-    println!("Shuffled: {}", shuffled_string);
-    println!("Seed used: {}", seed);
-
-
-    let test = decode_string(shuffled_string.as_str(), seed);
-    println!("Output: {}",test);
+            println!("{}", decode_string(args[1].as_str(), seed))
+        }
+        _ => panic!("Too Many arguments!"),
+    }
 }
