@@ -1,6 +1,6 @@
 use std::fs;
 
-use crate::services::procceses_handler::run_processes;
+use crate::services::processes_handler::run_processes;
 use crate::services::string_manipulations::divide_words;
 
 pub fn encode(filepath: &str, processes_count: u8) {
