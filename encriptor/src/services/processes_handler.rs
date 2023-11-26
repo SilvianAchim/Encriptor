@@ -24,7 +24,9 @@ pub fn run_processes(
 
     let outputs = process_children(&mut children_processes);
 
-    println!("{}", seed);
+    if flag == "encode" {
+        println!("{}", seed);
+    }
     for (_, output) in outputs {
         print!("{}", output);
     }

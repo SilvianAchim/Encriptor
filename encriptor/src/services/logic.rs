@@ -22,12 +22,16 @@ pub fn encode(filepath: &str, processes_count: u8) {
     );
 }
 
-pub fn decode(filepath: &str, seed: &str, processes: u8) {
+pub fn decode(filepath: &str, seed: &str, processes_count: u8) {
     let file_content = fs::read_to_string(filepath).expect("Failed to read file!");
     let words = file_content.split_whitespace().collect();
-    let divided_words = divide_words(words, processes as usize);
+    let divided_words = divide_words(words, processes_count as usize);
 
-    for (i, vector) in divided_words.iter().enumerate() {
-        println!("Vector {}: {:?}", i + 1, vector);
-    }
+    run_processes(
+        "../encriptor_process/target/debug/encriptor_process.exe",
+        processes_count,
+        divided_words,
+        "decode",
+        seed.to_string().as_str()
+    );
 }
