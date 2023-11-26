@@ -1,3 +1,4 @@
 mod files_handler;
-mod string_manipulations;
 pub mod logic;
+mod procceses_handler;
+mod string_manipulations;

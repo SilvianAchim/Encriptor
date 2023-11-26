@@ -38,6 +38,10 @@ fn decode_string(shuffled: &str, seed: u64) -> String {
 }
 
 fn main() {
+    //NOTE: Should be called with:
+         // {string} -> encode that string and outputs the encoded_string + the seed
+         // {string} {seed} -> decode that string and outputs the decoded string
+
     let args: Vec<String> = env::args().collect();
 
     match args.len() {
