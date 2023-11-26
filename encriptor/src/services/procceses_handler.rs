@@ -1,6 +1,6 @@
-use std::{thread, time};
 use std::io::Read;
 use std::process::{Child, ChildStdout, Command, Stdio};
+use std::{thread, time};
 
 pub fn run_processes(process_path: &str, processes_count: u8, args: Vec<Vec<&str>>) {
     if args.len() != processes_count as usize {
