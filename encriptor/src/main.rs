@@ -14,8 +14,8 @@ fn main() {
 
     match args.len() {
         0 | 1 => panic!("Not enough arguments!"),
-        2 => encode(args[1].as_str(), config.processes),
-        3 => decode(args[1].as_str(), args[2].as_str(), config.processes),
+        2 => encode(args[1].as_str(), config),
+        3 => decode(args[1].as_str(), args[2].as_str(), config),
         _ => panic!("Too Many arguments!"),
     }
 }

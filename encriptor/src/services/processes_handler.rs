@@ -3,28 +3,28 @@ use std::io::Read;
 use std::process::{Child, ChildStdout, Command, Stdio};
 
 use crate::constants::flags::ENCODE_FLAG;
+use crate::models::config::Config;
 use crate::services::file_actions::write_to_file;
 
-pub fn run_processes(
-    process_path: &str,
-    processes_count: u8,
-    args: Vec<Vec<&str>>,
-    flag: &str,
-    seed: &str,
-) {
-    if args.len() != processes_count as usize {
+pub fn run_processes(processes_options: Config, args: Vec<Vec<&str>>, flag: &str, seed: &str) {
+    if args.len() != processes_options.processes_count as usize {
         panic!("Invalid number of arguments for the given number of processes!");
     }
 
-    let start_args = build_start_args(process_path, args, flag, seed);
+    let start_args = build_start_args(processes_options.process_filepath.as_str(), args, flag, seed);
     let mut children_processes = start_processes(start_args);
 
     let children_outputs = collect_processes_outputs(&mut children_processes);
 
-    write_output(flag, seed, children_outputs);
+    write_output(
+        flag,
+        seed,
+        children_outputs,
+        processes_options.output_filepath.as_str(),
+    );
 }
 
-fn write_output(flag: &str, seed: &str, children_outputs: Vec<(usize, String)>) {
+fn write_output(flag: &str, seed: &str, children_outputs: Vec<(usize, String)>, output_path: &str) {
     let mut output = String::new();
     if flag == ENCODE_FLAG {
         output.push_str(format!("{}\n", seed).as_str());
@@ -32,7 +32,7 @@ fn write_output(flag: &str, seed: &str, children_outputs: Vec<(usize, String)>) 
     for (_, children_output) in children_outputs {
         output.push_str(&children_output);
     }
-    write_to_file("src/output.txt", &output);
+    write_to_file(output_path, &output);
 }
 
 fn build_start_args<'lifetime>(
