@@ -3,6 +3,7 @@ use std::env;
 use crate::services::logic::{decode, encode};
 use crate::startup::startup::read_config;
 
+mod constants;
 mod models;
 mod services;
 mod startup;

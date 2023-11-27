@@ -2,6 +2,7 @@ use std::fs;
 
 use rand::Rng;
 
+use crate::constants::flags::{DECODE_FLAG, ENCODE_FLAG};
 use crate::services::processes_handler::run_processes;
 use crate::services::string_manipulations::divide_words;
 
@@ -17,7 +18,7 @@ pub fn encode(filepath: &str, processes_count: u8) {
         "../encriptor_process/target/debug/encriptor_process.exe",
         processes_count,
         divided_words,
-        "encode",
+        ENCODE_FLAG,
         seed.to_string().as_str(),
     );
 }
@@ -31,7 +32,7 @@ pub fn decode(filepath: &str, seed: &str, processes_count: u8) {
         "../encriptor_process/target/debug/encriptor_process.exe",
         processes_count,
         divided_words,
-        "decode",
+        DECODE_FLAG,
         seed.to_string().as_str(),
     );
 }
