@@ -27,7 +27,7 @@ fn decode_string(input: &str, seed: u64) -> String {
 
 fn main() {
     //NOTE: Should be called with:
-    // {String} {String} {Flag} -> {String to be decoded}, {Seed}, {Flags: {--decode || --encode}, {--d || --e}}
+    // {String} {String} {Flag} -> {String to be decoded}, {Seed}, {Flags: {--decode || --encode}
 
     let args: Vec<String> = env::args().collect();
 
