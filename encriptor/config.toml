@@ -1,0 +1,3 @@
+processes_count = 4
+output_filepath = "src/output.txt"
+process_filepath = "../encriptor_process/target/debug/encriptor_process.exe"
